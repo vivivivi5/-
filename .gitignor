@@ -1,1 +1,38 @@
+# Операционные системы (macOS, Windows, Linux)
+.DS_Store
+Thumbs.db
+Desktop.ini
+*~
+
+# Редакторы кода и IDE (VS Code, PyCharm, IntelliJ IDEA и др.)
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+
+# Переменные окружения и секреты (пароли, токены, ключи API)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Логи и временные файлы
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+tmp/
+temp/
+
+# Зависимости и сборки (Node.js, Python и общие папки)
+node_modules/
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+dist/
+build/
 
