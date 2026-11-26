@@ -1,1 +1,183 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
+#include <windows.h>
+const int SIZE = 12;
+char board1[SIZE][SIZE];
+char board2[SIZE][SIZE];
+struct Ship {
+    int length;
+    int row;
+    int col;
+    bool isHorizontal;
+};
+void initTables() {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            if (i == 0 || j == 0 || i == SIZE - 1 || j == SIZE - 1) {
+                board1[i][j] = '#';
+                board2[i][j] = '#';
+            }
+            else {
+                board1[i][j] = '.';
+                board2[i][j] = '.';
+            }
+        }
+    }
+}
+void drawShip1(Ship s) {
+    for (int i = 0; i < s.length; i++) {
+        int r = s.isHorizontal ? s.row : s.row + i;
+        int c = s.isHorizontal ? s.col + i : s.col;
+        if (r > 0 && r < SIZE - 1 && c > 0 && c < SIZE - 1) {
+            board1[r][c] = '#';
+        }
+    }
+}
+void drawShip2(Ship s) {
+    for (int i = 0; i < s.length; i++) {
+        int r = s.isHorizontal ? s.row : s.row + i;
+        int c = s.isHorizontal ? s.col + i : s.col;
+        if (r > 0 && r < SIZE - 1 && c > 0 && c < SIZE - 1) {
+            board2[r][c] = '#';
+        }
+    }
+}
+void printTables(int player) {
+    printf("\n=== ХОД ИГРОКА %d ===\n\n", player);
+    printf("        ВАШЕ ПОЛЕ                  ПОЛЕ ПРОТИВНИКА\n");
+    printf("     A B C D E F G H I J            A B C D E F G H I J\n");
+    for (int i = 0; i < SIZE; i++) {
+        if (i > 0 && i < SIZE - 1) printf("%2d ", i);
+        else printf("   ");
+        for (int j = 0; j < SIZE; j++) {
+            if (player == 1) printf("%c ", board1[i][j]);
+            else printf("%c ", board2[i][j]);
+        }
+        printf("   ");
+        if (i > 0 && i < SIZE - 1) printf("%2d ", i);
+        else printf("   ");
+        for (int j = 0; j < SIZE; j++) {
+            char cell;
+            if (player == 1) cell = board2[i][j];
+            else cell = board1[i][j];
+
+            if (i > 0 && i < SIZE - 1 && j > 0 && j < SIZE - 1 && cell == '#') {
+                printf(". ");
+            }
+            else {
+                printf("%c ", cell);
+            }
+        }
+        printf("\n");
+    }
+}
+bool shot(int player) {
+    char colChar;
+    int row;
+    while (true) {
+        printf("\nИгрок %d, введите букву (A-J) и число (1-10): ", player);
+        scanf(" %c %d", &colChar, &row);
+
+        // Перевод маленькой буквы в большую
+        if (colChar >= 'a' && colChar <= 'z') {
+            colChar = colChar - 32;
+        }
+        int col = colChar - 'A' + 1;
+
+        if (row <= 0 || row >= SIZE - 1 || col <= 0 || col >= SIZE - 1) {
+            printf("Координаты вне поля! Попробуйте снова.\n");
+            continue;
+        }
+
+        if (player == 1) {
+            if (board2[row][col] == '#') {
+                board2[row][col] = 'X';
+                printf("ПОПАДАНИЕ! Стреляйте ещё раз!\n");
+                return true;
+            }
+            else if (board2[row][col] == '.') {
+                board2[row][col] = '*';
+                printf("МИМО!\n");
+                return false;
+            }
+            else {
+                printf("Вы уже стреляли сюда!\n");
+            }
+        }
+        else {
+            if (board1[row][col] == '#') {
+                board1[row][col] = 'X';
+                printf("ПОПАДАНИЕ! Стреляйте ещё раз!\n");
+                return true;
+            }
+            else if (board1[row][col] == '.') {
+                board1[row][col] = '*';
+                printf("МИМО!\n");
+                return false;
+            }
+            else {
+                printf("Вы уже стреляли сюда!\n");
+            }
+        }
+    }
+}
+bool checkWin(int player) {
+    for (int i = 1; i < SIZE - 1; i++) {
+        for (int j = 1; j < SIZE - 1; j++) {
+            if (player == 1 && board2[i][j] == '#') return false;
+            if (player == 2 && board1[i][j] == '#') return false;
+        }
+    }
+    return true;
+}
+int main() {
+    setlocale(LC_ALL, "Russian");
+    initTables();
+    Ship p1_s1 = { 4, 1, 1, true };
+    Ship p1_s2 = { 3, 3, 2, false };
+    Ship p1_s3 = { 3, 1, 7, true };
+    Ship p1_s4 = { 2, 4, 8, false };
+    Ship p1_s5 = { 2, 7, 1, true };
+    Ship p1_s6 = { 2, 9, 4, true };
+    Ship p1_s7 = { 1, 3, 5, true };
+    Ship p1_s8 = { 1, 6, 5, true };
+    Ship p1_s9 = { 1, 8, 8, true };
+    Ship p1_s10 = { 1, 10, 10, true };
+    drawShip1(p1_s1); drawShip1(p1_s2); drawShip1(p1_s3); drawShip1(p1_s4); drawShip1(p1_s5);
+    drawShip1(p1_s6); drawShip1(p1_s7); drawShip1(p1_s8); drawShip1(p1_s9); drawShip1(p1_s10);
+
+    Ship p2_s1 = { 4, 2, 9, false };
+    Ship p2_s2 = { 3, 1, 2, true };
+    Ship p2_s3 = { 3, 8, 2, true };
+    Ship p2_s4 = { 2, 3, 1, false };
+    Ship p2_s5 = { 2, 5, 4, true };
+    Ship p2_s6 = { 2, 9, 7, false };
+    Ship p2_s7 = { 1, 1, 6, true };
+    Ship p2_s8 = { 1, 3, 7, true };
+    Ship p2_s9 = { 1, 6, 1, true };
+    Ship p2_s10 = { 1, 7, 10, true };
+    drawShip2(p2_s1); drawShip2(p2_s2); drawShip2(p2_s3); drawShip2(p2_s4); drawShip2(p2_s5);
+    drawShip2(p2_s6); drawShip2(p2_s7); drawShip2(p2_s8); drawShip2(p2_s9); drawShip2(p2_s10);
+    int player = 1;
+    while (true) {
+        printTables(player);
+        bool hit = shot(player);
+        if (checkWin(player)) {
+            printTables(player);
+            printf("\nПОБЕДА! Игрок %d выиграл!\n", player);
+            break;
+        }
+        if (!hit) {
+            printf("Нажмите Enter для передачи хода...");
+            getchar();
+            getchar();
+            system("cls");
+            if (player == 1) player = 2;
+            else player = 1;
+        }
+    }
+    return 0;
+}
 
